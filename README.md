@@ -2,7 +2,7 @@
 This repository show some sample python scripts for some convenience functions such as exporting to LMs to obscure format. You can use these examples to modify develop your own scripts for specific functions.
 
 ### 1. Export a folder of landmarks as a text file: 
-```
+```python
 import os, glob, numpy
 
 def convertMorphoJLM(inputFileDirectory, outputLandmarkFile)
