@@ -67,6 +67,7 @@ def slicerScriptingExampleFunction(inputPath):
       if (ext2+ext.lower() != '.nii.gz'):
         print("skipping ", inputFilename)
         continue
+    
     # Load volume and set up segmentation
     inputFilePath = os.path.join(inputPath, inputFilename)
     volumeNode = slicer.util.loadVolume(inputFilePath)
@@ -91,6 +92,7 @@ def slicerScriptingExampleFunction(inputPath):
     effect.setParameter("MinimumThreshold", str(OTSUThresholdValue))
     effect.setParameter("MaximumThreshold",str(volumeScalarRange[1]))
     effect.self().onApply()
+    
     # Connected components to extract largest component
     segmentEditorWidget.setActiveEffectByName("Islands")
     effect = segmentEditorWidget.activeEffect()
