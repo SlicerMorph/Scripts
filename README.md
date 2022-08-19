@@ -45,19 +45,16 @@ This example shows how to interact with a variety of Slicer modules via Python t
 - Use surface toolbox to decimate the model 80%
 - Save the resultant model in OBJ format to the input folder
 ```python
-import os
-# Setup the SurfaceToolboxWidget 
-try:
-  slicer.modules.SurfaceToolboxWidget
-except:
-  currentModule = slicer.util.selectedModule()
-  slicer.util.selectModule('SurfaceToolbox')
-  slicer.util.selectModule(currentModule)
 
 def slicerScriptingExampleFunction(inputPath):
   import os
-  # Initialize the surface toolbox widget to access decimator
-  slicer.modules.surfacetoolbox.logic().__init__()
+  # Setup the SurfaceToolboxWidget to access logic functions
+  try:
+    slicer.modules.SurfaceToolboxWidget
+  except:
+    currentModule = slicer.util.selectedModule()
+    slicer.util.selectModule('SurfaceToolbox')
+    slicer.util.selectModule(currentModule)
   
   # Create segment editor to get access to effects
   segmentEditorWidget = slicer.qMRMLSegmentEditorWidget()
@@ -130,3 +127,9 @@ def slicerScriptingExampleFunction(inputPath):
     slicer.mrmlScene.RemoveNode(modelNode)
     shNode.RemoveItem(exportFolderItemId)
 ```
+After defining this function, run it on a folder containing volumes using: 
+```python
+
+slicerScriptingExampleFunction('/path/to/my/data')
+```
+
