@@ -46,6 +46,13 @@ This example shows how to interact with a variety of Slicer modules via Python t
 - Save the resultant model in OBJ format to the input folder
 ```python
 import os
+# Setup the SurfaceToolboxWidget 
+try:
+  slicer.modules.SurfaceToolboxWidget
+except:
+  currentModule = slicer.util.selectedModule()
+  slicer.util.selectModule('SurfaceToolbox')
+  slicer.util.selectModule(currentModule)
 
 def slicerScriptingExampleFunction(inputPath):
   import os
