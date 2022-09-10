@@ -133,3 +133,78 @@ After defining this function, run it on a folder containing volumes using:
 slicerScriptingExampleFunction('/path/to/my/data')
 ```
 
+### 3. Creating a custom layout for complex scenes: 
+This example shows how to generate a custom layout that allows more interaction with the scene. This example generates a row of three (3) 3D viewers on top, a row of three (3) Red, Green and Yellow slice views, and finally third row that contains a table and plot windows. The heights of each row is user adjustable. You can modify this example to create a layout that you prefer to use, and make it permanent by editing this .slicerrc.py start up script. 
+
+```xml
+# Define custom layouts for GPA modules in slicer global namespace
+myCustomLayout = """
+<layout type=\"vertical\">
+ <item>
+   <layout type=\"horizontal\">
+     <item>
+      <view class=\"vtkMRMLViewNode\" singletontag=\"1\">
+       <property name=\"viewlabel\" action=\"default\">1</property>
+      </view>
+     </item>
+     <item>
+      <view class=\"vtkMRMLViewNode\" singletontag=\"2\" type=\"secondary\">"
+       <property name=\"viewlabel\" action=\"default\">2</property>"
+      </view>
+    </item>
+    <item>
+      <view class=\"vtkMRMLViewNode\" singletontag=\"3\" type=\"secondary\">"
+       <property name=\"viewlabel\" action=\"default\">3</property>"
+      </view>
+    </item>
+   </layout>
+ </item>
+ <item>
+  <layout type=\"horizontal\">
+   <item>
+    <view class=\"vtkMRMLSliceNode\" singletontag=\"Red\">
+     <property name=\"orientation\" action=\"default\">Axial</property>
+     <property name=\"viewlabel\" action=\"default\">R</property>
+     <property name=\"viewcolor\" action=\"default\">#F34A33</property>
+    </view>
+   </item>
+     <item>
+      <view class=\"vtkMRMLSliceNode\" singletontag=\"Green\">
+       <property name=\"orientation\" action=\"default\">Coronal</property>
+       <property name=\"viewlabel\" action=\"default\">G</property>
+       <property name=\"viewcolor\" action=\"default\">#F34A33</property>
+      </view>
+     </item>
+   <item>
+    <view class=\"vtkMRMLSliceNode\" singletontag=\"Yellow\">"
+       <property name=\"orientation\" action=\"default\">Sagittal</property>
+       <property name=\"viewlabel\" action=\"default\">Y</property>
+       <property name=\"viewcolor\" action=\"default\">#F34A33</property>
+    </view>"
+   </item>"
+  </layout>
+ </item>
+ <item>
+  <layout type=\"horizontal\">
+     <item>
+      <view class=\"vtkMRMLPlotViewNode\" singletontag=\"PlotViewerWindow_1\">
+       <property name=\"viewlabel\" action=\"default\">1</property>
+      </view>
+     </item>
+   <item>
+    <view class=\"vtkMRMLTableViewNode\" singletontag=\"TableViewerWindow_1\">"
+     <property name=\"viewlabel\" action=\"default\">T</property>"
+    </view>"
+   </item>"
+  </layout>
+ </item>
+</layout>
+"""
+
+#assign arbitrary number to custom layout (must be unique)
+customLayoutId=707
+layoutManager = slicer.app.layoutManager()
+layoutManager.layoutLogic().GetLayoutNode().AddLayoutDescription(customLayoutId, myCustomLayout)
+layoutManager.setLayout(customLayoutId)
+
+```
