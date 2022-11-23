@@ -133,3 +133,34 @@ After defining this function, run it on a folder containing volumes using:
 slicerScriptingExampleFunction('/path/to/my/data')
 ```
 
+### 3. turn landmarks into 3D sphere models: 
+This can be useful to display pointLists not as Markups, but as models. It can also used to create masks to train NNs models for LM detection. Model names are obtained from the label of the corresponding LM.  
+Paste function into the python console, and specify a radius for the sphere model:
+
+```
+def markup2Spheres(markupNode, radius):
+  for i in range (0, markupNode.GetNumberOfControlPoints()):
+    # create a sphere centered at the current point
+    sphereSource = vtk.vtkSphereSource()
+    sphereSource.SetCenter(markupNode.GetNthControlPointPosition(i))
+    sphereSource.SetRadius(radius)
+    # set resolution of phi and theta to get a smooth surface
+    sphereSource.SetPhiResolution(100)
+    sphereSource.SetThetaResolution(100)
+    sphereSource.Update()
+    # create model and display nodes in the slicer scene to visualize the sphere
+    modelNode = slicer.vtkMRMLModelNode()
+    modelNode.SetAndObservePolyData(sphereSource.GetOutput())
+    modelNode.SetName(markupNode.GetNthControlPointLabel(i))
+    slicer.mrmlScene.AddNode(modelNode)
+    modelDisplayNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLModelDisplayNode')
+    modelNode.SetAndObserveDisplayNodeID(modelDisplayNode.GetID())
+```
+
+If your pointList object called `F`, execute the function like this
+```
+n= getNode("F")
+markup2Spheres(n, 8)
+```
+
+
