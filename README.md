@@ -239,3 +239,46 @@ layoutManager.setLayout(customLayoutId)
 
 ```
 
+### 5. Read an NRRD volume from the disk, and resample it to a specified voxel size.
+
+```
+#where to read the input file and save the reduced file
+filePath="/Users/amaga/Library/Caches/slicer.org/Slicer/SlicerIO/MR-head.nrrd"
+outPath="/Users/amaga/Desktop/Test.nrrd"
+
+# read file into Slicer
+slicer.util.loadVolume(filePath)
+
+# find the files NodeID
+volumeNode = getNode('MR-head')
+
+#create a blank Markup ROI
+roiNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLMarkupsROINode")
+
+#set the new markup ROI to the dimensions of the volume holaded
+cropVolumeParameters = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLCropVolumeParametersNode")
+cropVolumeParameters.SetInputVolumeNodeID(volumeNode.GetID())
+cropVolumeParameters.SetROINodeID(roiNode.GetID())
+slicer.modules.cropvolume.logic().SnapROIToVoxelGrid(cropVolumeParameters)  # optional (rotates the ROI to match the volume axis directions)
+slicer.modules.cropvolume.logic().FitROIToInputVolume(cropVolumeParameters)
+slicer.mrmlScene.RemoveNode(cropVolumeParameters)
+
+#set the cropping parameters
+cropVolumeLogic = slicer.modules.cropvolume.logic()
+cropVolumeParameterNode = slicer.vtkMRMLCropVolumeParametersNode()
+cropVolumeParameterNode.SetIsotropicResampling(True)
+
+#set the output resolution to 2 millimeters. units in slicer is always in mm. 
+cropVolumeParameterNode.SetSpacingScalingConst(2)
+cropVolumeParameterNode.SetROINodeID(roiNode.GetID())
+cropVolumeParameterNode.SetInputVolumeNodeID(volumeNode.GetID())
+
+#do the cropping
+cropVolumeLogic.Apply(cropVolumeParameterNode)
+
+#obtain the nodeID of the cropped volume 
+croppedVolume = slicer.mrmlScene.GetNodeByID(cropVolumeParameterNode.GetOutputVolumeNodeID())
+
+#write the cropped volume to file
+slicer.util.exportNode(croppedVolume, outPath, {"useCompression": 0})
+```
