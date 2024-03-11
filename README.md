@@ -137,7 +137,7 @@ slicerScriptingExampleFunction('/path/to/my/data')
 This can be useful to display pointLists not as Markups, but as models. It can also used to create masks to train NNs models for LM detection. Model names are obtained from the label of the corresponding LM.  
 Paste function into the python console, and specify a radius for the sphere model:
 
-```
+```python
 def markup2Spheres(markupNode, radius):
   for i in range (0, markupNode.GetNumberOfControlPoints()):
     # create a sphere centered at the current point
@@ -241,7 +241,7 @@ layoutManager.setLayout(customLayoutId)
 
 ### 5. Read an NRRD volume from the disk, and resample it to a specified voxel size.
 
-```
+```python
 #where to read the input file and save the reduced file
 filePath="/Users/amaga/Library/Caches/slicer.org/Slicer/SlicerIO/MR-head.nrrd"
 outPath="/Users/amaga/Desktop/Test.nrrd"
@@ -282,3 +282,15 @@ croppedVolume = slicer.mrmlScene.GetNodeByID(cropVolumeParameterNode.GetOutputVo
 #write the cropped volume to file
 slicer.util.exportNode(croppedVolume, outPath, {"useCompression": 0})
 ```
+### 6. Display a volume name as a corner annotation in 3D 
+
+```python
+@vtk.calldata_type(vtk.VTK_OBJECT)
+def onVolumeLoaded(caller, event, calldata):
+  node = calldata
+  if isinstance(node, slicer.vtkMRMLVolumeNode):
+    view=slicer.app.layoutManager().threeDWidget(0).threeDView()
+    view.cornerAnnotation().SetText(vtk.vtkCornerAnnotation.UpperRight,node.GetName())
+
+slicer.mrmlScene.AddObserver(slicer.vtkMRMLScene.NodeAddedEvent, onVolumeLoaded)
+````
